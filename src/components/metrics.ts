@@ -108,7 +108,7 @@ export function getMetricsStyles(): string {
     }
 
     .metrics-time {
-      font-size: 32px;
+      font-size: 24px;
       font-weight: 600;
       color: #333333;
     }
