@@ -1,8 +1,12 @@
 import { DashboardData } from "../types";
+import { getConfig } from "../config";
 import { renderMetricsBar, getMetricsStyles } from "./metrics";
 import { renderGraph, getGraphStyles } from "./graph";
 
 export function renderDashboard(data: DashboardData): string {
+  const config = getConfig();
+  const { width, height } = config.display;
+
   const metricsBar = renderMetricsBar(data.metrics);
   const graph = renderGraph(data.history);
 
@@ -10,7 +14,7 @@ export function renderDashboard(data: DashboardData): string {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=800, height=480, initial-scale=1.0">
+  <meta name="viewport" content="width=${width}, height=${height}, initial-scale=1.0">
   <title>Power Terminal</title>
   <style>
     * {
@@ -20,8 +24,8 @@ export function renderDashboard(data: DashboardData): string {
     }
 
     html, body {
-      width: 800px;
-      height: 480px;
+      width: ${width}px;
+      height: ${height}px;
       overflow: hidden;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       background: #ffffff;
@@ -29,8 +33,8 @@ export function renderDashboard(data: DashboardData): string {
     }
 
     .container {
-      width: 800px;
-      height: 480px;
+      width: ${width}px;
+      height: ${height}px;
       display: flex;
       flex-direction: column;
     }

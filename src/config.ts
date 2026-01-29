@@ -1,5 +1,7 @@
 // Configuration loaded from environment variables
 
+export type DisplayMode = "color" | "grayscale" | "bw";
+
 export interface Config {
   haUrl: string;
   haToken: string;
@@ -9,6 +11,11 @@ export interface Config {
     batterySoc: string;
     gridPower: string;
     houseConsumption: string;
+  };
+  display: {
+    width: number;
+    height: number;
+    mode: DisplayMode;
   };
 }
 
@@ -22,6 +29,24 @@ function requireEnv(name: string): string {
 
 function optionalEnv(name: string, defaultValue: string): string {
   return process.env[name] || defaultValue;
+}
+
+function optionalEnvInt(name: string, defaultValue: number): number {
+  const value = process.env[name];
+  if (!value) return defaultValue;
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) ? defaultValue : parsed;
+}
+
+function parseDisplayMode(value: string): DisplayMode {
+  const normalized = value.toLowerCase();
+  if (normalized === "grayscale" || normalized === "grey" || normalized === "gray") {
+    return "grayscale";
+  }
+  if (normalized === "bw" || normalized === "blackwhite" || normalized === "monochrome") {
+    return "bw";
+  }
+  return "color";
 }
 
 export function loadConfig(): Config {
@@ -40,6 +65,11 @@ export function loadConfig(): Config {
         "HA_ENTITY_HOUSE_CONSUMPTION",
         "sensor.house_consumption"
       ),
+    },
+    display: {
+      width: optionalEnvInt("DISPLAY_WIDTH", 800),
+      height: optionalEnvInt("DISPLAY_HEIGHT", 480),
+      mode: parseDisplayMode(optionalEnv("DISPLAY_MODE", "color")),
     },
   };
 }
