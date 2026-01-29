@@ -28,7 +28,20 @@ export function getMetricItems(metrics: EnergyMetrics): MetricItem[] {
       value: formatPower(metrics.houseConsumption),
       color: "#3b82f6",
     },
+    {
+      emoji: "⚡",
+      label: "Grid",
+      value: formatPower(metrics.gridPower),
+      color: getGridColor(metrics.gridPower),
+    },
   ];
+}
+
+function getGridColor(power: number | null): string {
+  if (power === null) return "#666666";
+  if (power > 0) return "#10b981"; // Green - importing
+  if (power < 0) return "#ef4444"; // Red - exporting
+  return "#666666";
 }
 
 function getBatteryColor(soc: number | null): string {
