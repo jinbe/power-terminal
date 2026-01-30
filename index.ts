@@ -2,6 +2,7 @@ import { fetchDashboardData } from "./src/services/homeAssistant";
 import { renderDashboard } from "./src/components/dashboard";
 import { renderErrorScreen } from "./src/components/error";
 import { HAError } from "./src/types";
+import { getConfig } from "./src/config";
 
 function getErrorFromException(error: unknown): HAError {
   if (error instanceof HAError) {
@@ -22,6 +23,15 @@ const server = Bun.serve({
   port: 3000,
   async fetch(req) {
     const url = new URL(req.url);
+    const config = getConfig();
+
+    // Check API key if configured
+    if (config.apiKey) {
+      const providedKey = url.searchParams.get("api_key");
+      if (providedKey !== config.apiKey) {
+        return new Response("Unauthorized", { status: 401 });
+      }
+    }
 
     if (url.pathname === "/" || url.pathname === "/index.html") {
       try {

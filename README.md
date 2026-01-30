@@ -75,6 +75,7 @@ The dashboard will be available at `http://localhost:3000`
 | `DISPLAY_WIDTH` | `800` | Screen width in pixels |
 | `DISPLAY_HEIGHT` | `480` | Screen height in pixels |
 | `DISPLAY_MODE` | `color` | Display mode: `color`, `grayscale`, or `bw` |
+| `API_KEY` | (none) | If set, requests must include `?api_key=<key>` |
 
 ### Entity Configuration
 

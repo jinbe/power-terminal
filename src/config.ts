@@ -6,6 +6,7 @@ export interface Config {
   haUrl: string;
   haToken: string;
   timezone: string;
+  apiKey: string | null;
   entities: {
     pvPower: string;
     batterySoc: string;
@@ -54,6 +55,7 @@ export function loadConfig(): Config {
     haUrl: requireEnv("HA_URL").replace(/\/$/, ""), // Remove trailing slash
     haToken: requireEnv("HA_TOKEN"),
     timezone: optionalEnv("TZ", "UTC"),
+    apiKey: process.env.API_KEY || null,
     entities: {
       pvPower: optionalEnv("HA_ENTITY_PV_POWER", "sensor.pv_power"),
       batterySoc: optionalEnv(
