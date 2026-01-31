@@ -27,6 +27,7 @@ export interface EnergyMetrics {
   gridPower: number | null; // Watts, positive = import, negative = export
   houseConsumption: number | null; // Watts
   carChargerPower: number | null; // Watts
+  carChargerSwitch: boolean | null; // true = on, false = off
   timestamp: Date;
 }
 
@@ -39,6 +40,7 @@ export interface EnergyHistory {
   pvPower: HistoryDataPoint[];
   gridPower: HistoryDataPoint[];
   houseConsumption: HistoryDataPoint[];
+  carChargerPower: HistoryDataPoint[];
 }
 
 export interface DashboardData {

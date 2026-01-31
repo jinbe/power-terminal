@@ -161,12 +161,13 @@ export async function fetchCurrentMetrics(): Promise<EnergyMetrics> {
   const entities = config.entities;
 
   // Fetch all states in parallel
-  const [pvState, batteryState, gridState, houseState, carChargerState] = await Promise.all([
+  const [pvState, batteryState, gridState, houseState, carChargerState, carChargerSwitchState] = await Promise.all([
     fetchEntityState(entities.pvPower),
     fetchEntityState(entities.batterySoc),
     fetchEntityState(entities.gridPower),
     fetchEntityState(entities.houseConsumption),
     fetchEntityState(entities.carChargerPower),
+    fetchEntityState(entities.carChargerSwitch),
   ]);
 
   return {
@@ -175,6 +176,7 @@ export async function fetchCurrentMetrics(): Promise<EnergyMetrics> {
     gridPower: parseStateValue(gridState),
     houseConsumption: parseStateValue(houseState),
     carChargerPower: parseStateValue(carChargerState),
+    carChargerSwitch: carChargerSwitchState.state === "on" ? true : carChargerSwitchState.state === "off" ? false : null,
     timestamp: new Date(),
   };
 }
@@ -187,6 +189,7 @@ export async function fetchHistoryData(): Promise<EnergyHistory> {
     entities.pvPower,
     entities.gridPower,
     entities.houseConsumption,
+    entities.carChargerPower,
   ];
 
   const history = await fetchEntityHistory(entityIds, 24);
@@ -204,6 +207,9 @@ export async function fetchHistoryData(): Promise<EnergyHistory> {
     gridPower: downsampleHistory(historyMap.get(entities.gridPower) || []),
     houseConsumption: downsampleHistory(
       historyMap.get(entities.houseConsumption) || []
+    ),
+    carChargerPower: downsampleHistory(
+      historyMap.get(entities.carChargerPower) || []
     ),
   };
 }

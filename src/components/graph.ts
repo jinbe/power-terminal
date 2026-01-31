@@ -5,21 +5,24 @@ import { formatShortTime } from "../utils/format";
 const PADDING = { top: 20, right: 20, bottom: 50, left: 60 };
 
 // Color palettes for different display modes
-const COLOR_PALETTES: Record<DisplayMode, { pvPower: string; houseConsumption: string; gridPower: string }> = {
+const COLOR_PALETTES: Record<DisplayMode, { pvPower: string; houseConsumption: string; gridPower: string; carChargerPower: string }> = {
   color: {
     pvPower: "#f59e0b", // Yellow/Orange for solar
     houseConsumption: "#3b82f6", // Blue for house
     gridPower: "#10b981", // Green for grid
+    carChargerPower: "#8b5cf6", // Purple for car
   },
   grayscale: {
     pvPower: "#666666",
     houseConsumption: "#999999",
     gridPower: "#333333",
+    carChargerPower: "#4a4a4a",
   },
   bw: {
     pvPower: "#000000",
     houseConsumption: "#000000",
     gridPower: "#000000",
+    carChargerPower: "#000000",
   },
 };
 
@@ -82,6 +85,7 @@ function calculateYAxisRange(history: EnergyHistory): YAxisRange {
     ...history.pvPower.map((p) => p.value),
     ...history.houseConsumption.map((p) => p.value),
     ...history.gridPower.map((p) => p.value),
+    ...history.carChargerPower.map((p) => p.value),
   ];
 
   if (allValues.length === 0) {
@@ -225,14 +229,16 @@ function renderLegend(dims: GraphDimensions): string {
         { label: "Solar", color: colors.pvPower, dash: "" },
         { label: "House", color: colors.houseConsumption, dash: "8,4" },
         { label: "Grid", color: colors.gridPower, dash: "2,2" },
+        { label: "Car", color: colors.carChargerPower, dash: "4,2,1,2" },
       ]
     : [
-        { label: "Solar", color: colors.pvPower },
-        { label: "House", color: colors.houseConsumption },
-        { label: "Grid", color: colors.gridPower },
+        { label: "Solar", color: colors.pvPower, dash: "" },
+        { label: "House", color: colors.houseConsumption, dash: "" },
+        { label: "Grid", color: colors.gridPower, dash: "" },
+        { label: "Car", color: colors.carChargerPower, dash: "" },
       ];
 
-  const itemWidth = 100;
+  const itemWidth = 80;
   const startX = dims.width / 2 - (items.length * itemWidth) / 2;
   const y = dims.height - 15;
 
@@ -241,8 +247,8 @@ function renderLegend(dims: GraphDimensions): string {
       const x = startX + i * itemWidth;
       const dashAttr = item.dash ? ` stroke-dasharray="${item.dash}"` : "";
       return `
-        <line x1="${x}" y1="${y}" x2="${x + 24}" y2="${y}" stroke="${item.color}" stroke-width="3"${dashAttr}/>
-        <text x="${x + 32}" y="${y + 4}" font-size="14" fill="#333333">${item.label}</text>
+        <line x1="${x}" y1="${y}" x2="${x + 20}" y2="${y}" stroke="${item.color}" stroke-width="3"${dashAttr}/>
+        <text x="${x + 26}" y="${y + 4}" font-size="12" fill="#333333">${item.label}</text>
       `;
     })
     .join("\n");
@@ -261,11 +267,13 @@ export function renderGraph(history: EnergyHistory): string {
         { name: "pvPower", color: colors.pvPower, points: history.pvPower },
         { name: "houseConsumption", color: colors.houseConsumption, points: history.houseConsumption, dashArray: "8,4" },
         { name: "gridPower", color: colors.gridPower, points: history.gridPower, dashArray: "2,2" },
+        { name: "carChargerPower", color: colors.carChargerPower, points: history.carChargerPower, dashArray: "4,2,1,2" },
       ]
     : [
         { name: "pvPower", color: colors.pvPower, points: history.pvPower },
         { name: "houseConsumption", color: colors.houseConsumption, points: history.houseConsumption },
         { name: "gridPower", color: colors.gridPower, points: history.gridPower },
+        { name: "carChargerPower", color: colors.carChargerPower, points: history.carChargerPower },
       ];
 
   const paths = series
