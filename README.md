@@ -87,6 +87,8 @@ Override the default Home Assistant entity IDs:
 | `HA_ENTITY_BATTERY_SOC` | `sensor.battery_state_of_charge` |
 | `HA_ENTITY_GRID_POWER` | `sensor.active_power` |
 | `HA_ENTITY_HOUSE_CONSUMPTION` | `sensor.house_consumption` |
+| `HA_ENTITY_CAR_CHARGER_POWER` | `sensor.car_charger_power` |
+| `HA_ENTITY_CAR_CHARGER_SWITCH` | `switch.car_charger` |
 
 **Note**: Grid power should be positive for import (buying from grid) and negative for export (selling to grid).
 
