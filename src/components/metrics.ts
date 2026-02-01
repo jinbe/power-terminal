@@ -34,6 +34,12 @@ export function getMetricItems(metrics: EnergyMetrics): MetricItem[] {
       value: formatPower(metrics.gridPower),
       color: getGridColor(metrics.gridPower),
     },
+    {
+      emoji: "🚗",
+      label: "Car",
+      value: formatPower(metrics.carChargerPower),
+      color: getCarColor(metrics.carChargerSwitch),
+    },
   ];
 }
 
@@ -49,6 +55,12 @@ function getBatteryColor(soc: number | null): string {
   if (soc >= 60) return "#22c55e"; // Green
   if (soc >= 30) return "#f59e0b"; // Orange
   return "#ef4444"; // Red
+}
+
+function getCarColor(switchState: boolean | null): string {
+  if (switchState === null) return "#666666";
+  if (switchState) return "#22c55e"; // Green when on
+  return "#ef4444"; // Red when off
 }
 
 export function renderMetricsBar(metrics: EnergyMetrics): string {
@@ -89,21 +101,21 @@ export function getMetricsStyles(): string {
 
     .metrics-left {
       display: flex;
-      gap: 32px;
+      gap: 20px;
     }
 
     .metric-item {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .metric-emoji {
-      font-size: 32px;
+      font-size: 24px;
     }
 
     .metric-value {
-      font-size: 32px;
+      font-size: 24px;
       font-weight: 700;
     }
 
