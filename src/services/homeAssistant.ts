@@ -161,11 +161,12 @@ export async function fetchCurrentMetrics(): Promise<EnergyMetrics> {
   const entities = config.entities;
 
   // Fetch all states in parallel
-  const [pvState, batteryState, gridState, houseState] = await Promise.all([
+  const [pvState, batteryState, gridState, houseState, carChargerState] = await Promise.all([
     fetchEntityState(entities.pvPower),
     fetchEntityState(entities.batterySoc),
     fetchEntityState(entities.gridPower),
     fetchEntityState(entities.houseConsumption),
+    fetchEntityState(entities.carChargerPower),
   ]);
 
   return {
@@ -173,6 +174,7 @@ export async function fetchCurrentMetrics(): Promise<EnergyMetrics> {
     batterySoc: parseStateValue(batteryState),
     gridPower: parseStateValue(gridState),
     houseConsumption: parseStateValue(houseState),
+    carChargerPower: parseStateValue(carChargerState),
     timestamp: new Date(),
   };
 }
