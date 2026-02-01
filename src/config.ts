@@ -13,6 +13,7 @@ export interface Config {
     gridPower: string;
     houseConsumption: string;
     carChargerPower: string;
+    carChargerSwitch: string;
   };
   display: {
     width: number;
@@ -71,6 +72,10 @@ export function loadConfig(): Config {
       carChargerPower: optionalEnv(
         "HA_ENTITY_CAR_CHARGER_POWER",
         "sensor.car_charger_power"
+      ),
+      carChargerSwitch: optionalEnv(
+        "HA_ENTITY_CAR_CHARGER_SWITCH",
+        "switch.car_charger"
       ),
     },
     display: {
