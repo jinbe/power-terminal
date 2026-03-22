@@ -26,8 +26,9 @@ export interface EnergyMetrics {
   batterySoc: number | null; // Percentage 0-100
   gridPower: number | null; // Watts, positive = import, negative = export
   houseConsumption: number | null; // Watts
-  carChargerPower: number | null; // Watts
+  carChargerPower: number | null; // Watts, positive = charging, negative = driving (ignored)
   carChargerSwitch: boolean | null; // true = on, false = off
+  carBatterySoc: number | null; // Percentage 0-100
   timestamp: Date;
 }
 

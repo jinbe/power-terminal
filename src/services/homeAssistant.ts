@@ -161,22 +161,28 @@ export async function fetchCurrentMetrics(): Promise<EnergyMetrics> {
   const entities = config.entities;
 
   // Fetch all states in parallel
-  const [pvState, batteryState, gridState, houseState, carChargerState, carChargerSwitchState] = await Promise.all([
+  const [pvState, batteryState, gridState, houseState, carChargerState, carChargerSwitchState, carBatteryState] = await Promise.all([
     fetchEntityState(entities.pvPower),
     fetchEntityState(entities.batterySoc),
     fetchEntityState(entities.gridPower),
     fetchEntityState(entities.houseConsumption),
     fetchEntityState(entities.carChargerPower),
     fetchEntityState(entities.carChargerSwitch),
+    fetchEntityState(entities.carBatterySoc),
   ]);
+
+  // Car battery power: positive = charging, negative = driving (ignore by clamping to 0)
+  const rawCarPower = parseStateValue(carChargerState);
+  const carChargerPower = rawCarPower !== null ? Math.max(0, rawCarPower) : null;
 
   return {
     pvPower: parseStateValue(pvState),
     batterySoc: parseStateValue(batteryState),
     gridPower: parseStateValue(gridState),
     houseConsumption: parseStateValue(houseState),
-    carChargerPower: parseStateValue(carChargerState),
+    carChargerPower,
     carChargerSwitch: carChargerSwitchState.state === "on" ? true : carChargerSwitchState.state === "off" ? false : null,
+    carBatterySoc: parseStateValue(carBatteryState),
     timestamp: new Date(),
   };
 }
@@ -202,15 +208,21 @@ export async function fetchHistoryData(): Promise<EnergyHistory> {
     }
   }
 
+  // Car battery power: clamp negative values to 0 (negative = driving, not charging)
+  const carChargerHistory = downsampleHistory(
+    historyMap.get(entities.carChargerPower) || []
+  ).map((point) => ({
+    ...point,
+    value: Math.max(0, point.value),
+  }));
+
   return {
     pvPower: downsampleHistory(historyMap.get(entities.pvPower) || []),
     gridPower: downsampleHistory(historyMap.get(entities.gridPower) || []),
     houseConsumption: downsampleHistory(
       historyMap.get(entities.houseConsumption) || []
     ),
-    carChargerPower: downsampleHistory(
-      historyMap.get(entities.carChargerPower) || []
-    ),
+    carChargerPower: carChargerHistory,
   };
 }
 
