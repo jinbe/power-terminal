@@ -37,8 +37,8 @@ export function getMetricItems(metrics: EnergyMetrics): MetricItem[] {
     {
       emoji: "🚗",
       label: "Car",
-      value: formatPower(metrics.carChargerPower),
-      color: getCarColor(metrics.carChargerSwitch),
+      value: formatCarMetric(metrics.carChargerPower, metrics.carBatterySoc),
+      color: getCarColor(metrics.carChargerPower, metrics.carBatterySoc),
     },
   ];
 }
@@ -57,10 +57,17 @@ function getBatteryColor(soc: number | null): string {
   return "#ef4444"; // Red
 }
 
-function getCarColor(switchState: boolean | null): string {
-  if (switchState === null) return "#666666";
-  if (switchState) return "#22c55e"; // Green when on
-  return "#ef4444"; // Red when off
+function getCarColor(power: number | null, soc: number | null): string {
+  if (power !== null && power > 0) return "#22c55e"; // Green when charging
+  if (soc !== null) return "#8b5cf6"; // Purple when we have SoC but not charging
+  return "#666666";
+}
+
+function formatCarMetric(power: number | null, soc: number | null): string {
+  const parts: string[] = [];
+  if (soc !== null) parts.push(formatPercent(soc));
+  if (power !== null && power > 0) parts.push(formatPower(power));
+  return parts.length > 0 ? parts.join(" ") : "—";
 }
 
 export function renderMetricsBar(metrics: EnergyMetrics): string {
